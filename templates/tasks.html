@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row py-3">
+      <h2 class="text-center pt-5 pb-3">Tasks</h2>
+        <table class="table table-responsive">
+          <thead>
+              <tr>
+                  <th scope="col">Name</th>
+                  <th scope="col">Due Date</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Priority</th>
+                  <th scope="col">Project</th>
+              </tr>
+          </thead>
+          <tbody>
+            {% for task in tasks %}
+          </tr>
+              <td>{{ task.name }}</td>
+              <td>{{ task.due_date }}</td>
+              <td>{{ task.status}}</td>
+              <td>{{ task.priority}}</td>
+              {% for project in project_dict %}
+                {% if project.id == task.project_id%}
+                  <td>{{ project.name }}</td>
+                {% endif %}
+              {% endfor %}
+              {% if task.project_id == None %}
+              <td>None</td>
+            {% endif %}
+            {% endfor %}
+          </tr>
+          </tbody>
+        </table>
+    </div>
+    <div class="row py-3">
+      <div class="col-md-6 pl-4">
+        <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#taskModal">Add Task</button>
+        </div>
+    </div>
+</div>
+{% include "task-modal.html" %}
+
+{% endblock %}

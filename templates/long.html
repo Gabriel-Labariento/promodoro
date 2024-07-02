@@ -1,0 +1,54 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row py-4">
+        <div class="col-md-6 offset-md-3">
+            <div class="card bg--bs-dark-bg-subtle">
+                <div class="card-header">
+                    <ul class="nav nav-fill nav-pills card-header-pills">
+                        <li class="nav-item">
+                            <a href="/" class="nav-link text-dark">Focus</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/short" class="nav-link text-dark">Short Break</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/long" class="nav-link text-light text-bg-dark" aria-current="true">Long Break</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <div class="countdown mx-3 text-center countdown">
+                        <h1 class="d-inline" id="minutes">00</h1>
+                        <h1 class="d-inline"> : </h1>
+                        <h1 class="d-inline" id="seconds">00</h1>
+                    </div>
+                    <div class="pt-4 d-grid gap-2 col-6 mx-auto">
+                    <button id="pomoStart" type="button" class="btn btn-dark btn-md">Start</button>
+                    <button id="pomoPause" class="btn btn-secondary" disabled>Pause</button>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row pt-2">
+    <div class="col-md-4 offset-md-4">
+        <a href="#" class="text-dark" data-bs-toggle="modal" data-bs-target="#taskModal">
+            <div class="card text-bg-light new-task">
+                <div class="card-body">
+                    <span class="text-muted fst-italic ">New Task</span>
+                </div>
+           </div>
+        </a>
+    </div>
+</div>
+</div>
+
+{% include "task-modal.html" %}
+<script>
+    const pomodoroDuration = "{{ pomodoro_duration }}";
+</script>
+{% endblock %}

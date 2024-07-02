@@ -1,0 +1,34 @@
+<div id="projectModal" class="modal fade" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">New Project</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="new-task-form" method="post">
+                    <div class="mb-3">
+                        <label for="project-name" class="form-label">Project Name</label>
+                        <input type="text" class="form-control" id="project-name" name="project-name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="project-description" class="form-label">Project Description</label>
+                        <input type="text" class="form-control" id="project-description" name="project-description">
+                    </div>
+                    <div class="mb-3">
+                        <label for="start-date" class="form-label">Start Date</label>
+                        <input type="date" class="form-control" id="start-date" name="start-date">
+                    </div>
+                    <div class="mb-3">
+                        <label for="due-date" class="form-label">Due Date</label>
+                        <input type="date" class="form-control" id="due-date" name="due-date">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary" form="new-task-form" value="new-task">Add Project</button>
+            </div>
+        </div>
+    </div>
+</div>

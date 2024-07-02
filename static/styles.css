@@ -1,0 +1,20 @@
+.custom-form{
+    max-width: 1000px;
+}
+
+.selected {
+    font-weight: bold;
+}
+
+a {
+    text-decoration: none !important; 
+  }
+
+.new-task:hover{
+    box-shadow: 2px 2px rgba(0, 0, 0, 0.1);
+}
+
+.task:hover{
+    box-shadow: 5px 5px rgba(1, 50, 150, 0.1);;
+    cursor: pointer;
+}

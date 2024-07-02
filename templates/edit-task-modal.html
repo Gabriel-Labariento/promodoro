@@ -1,0 +1,55 @@
+<!-- Edit Tasks Modal -->
+<div id="editTaskModal" class="modal fade" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Task</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="edit-task-form" method="post">
+                    <input type="hidden" name="form_id" value="edit-task-form">
+                    <div class="mb-3">
+                        <label for="edit-task-name" class="form-label">Task Name</label>
+                        <input type="text" class="form-control" id="edit-task-name" name="edit-task-name" value="{{ task.name }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit-task-duration" class="form-label">Duration (minutes)</label>
+                        <input type="number" class="form-control" id="edit-task-duration" name="edit-task-duration" placeholder="{{ task.duration }}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit-status" class="form-label">Status</label>
+                        <select name="edit-status" class="form-select">
+                            <option selected>{{ task.status }}</option>
+                            <option value="Not Started">Not Started</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Not Started">Finished</option>
+                          </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit-priority" class="form-label">Priority</label>
+                        <select name="edit-priority" class="form-select">
+                            <option selected>{{ task.priority }}</option>
+                            <option value="Low">Low</option>
+                            <option value="Medium">Medium</option>
+                            <option value="High">High</option>
+                          </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit-parent-project" class="form-label">Parent Project</label>
+                        <select name="edit-parent-project" class="form-select">
+                            <option selected>{{ task.project_id }}</option>
+                            {% for project in projects %}
+                            <option value="{{ project.id }}">{{ project.name }}</option>
+                            {% endfor %}
+                          </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary" form="new-task-form" value="new-task">Add Task</button>
+            </div>
+        </div>
+    </div>
+</div>
