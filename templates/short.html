@@ -33,6 +33,28 @@
         </div>
     </div>
 </div>
+
+<!--Create a new card for new tasks-->
+<div id="tasks">
+    <!--New task cards are made here-->
+</div>
+<!-- Embed the created cards on the index page to handle page reload-->
+{% for task in tasks %}
+    <div class="row pt-2">
+        <div class="col-md-4 offset-md-4">
+            <a href="#" class="text-dark" data-bs-toggle="modal" data-bs-target="#editTaskModal">
+                <div class="card text-bg-secondary task">
+                    <div class="card-body">
+                        <span class="text-light fw-bold">{{ task.name }}</span>
+                    </div>
+            </div>
+            </a>
+        </div>
+    </div>
+
+{% include "edit-task-modal.html" %}
+{% endfor %}
+
 <div class="row pt-2">
     <div class="col-md-4 offset-md-4">
         <a href="#" class="text-dark" data-bs-toggle="modal" data-bs-target="#taskModal">
@@ -47,6 +69,7 @@
 </div>
 
 {% include "task-modal.html" %}
+
 <script>
     const pomodoroDuration = "{{ pomodoro_duration }}";
 </script>

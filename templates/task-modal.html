@@ -7,19 +7,19 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="new-task-form" method="post">
+                <form  action="/add_task" id="new-task-form" method="post">
                     <input type="hidden" name="form_id" value="new-task-form">
                     <div class="mb-3">
-                        <label for="task-name" class="form-label">Task Name</label>
-                        <input type="text" class="form-control" id="task-name" name="task-name" required>
+                        <label for="task_name" class="form-label">Task Name</label>
+                        <input type="text" class="form-control" id="task_name" name="task_name" required>
                     </div>
                     <div class="mb-3">
                         <label for="task-duration" class="form-label">Duration (minutes)</label>
-                        <input type="number" class="form-control" id="task-duration" name="task-duration">
+                        <input type="number" class="form-control" id="task_duration" name="task_duration">
                     </div>
                     <div class="mb-3">
-                        <select name="add-parent" id="add-parent" class="form-select" aria-label="Default select example">
-                            <option selected>Select Parent Project</option>
+                        <select name="parent_project" id="parent_project" class="form-select" aria-label="Default select example">
+                            <option value="" selected>Select Parent Project</option>
                             {% for project in projects %}
                             <option value="{{ project.id }}">{{ project.name }}</option>
                             {% endfor %}

@@ -38,18 +38,96 @@ def index():
         "SELECT id, name FROM projects WHERE projects.user_id = ? ",
         session["user_id"]
         )
-    
-    # Handle the addition of a new task
-    if request.method == "POST":
-
-        # Identify which form the user submitted
-        form_id = request.form.get("form_id")
-        if form_id == "new-task-form":
-            new_task()
-        # else:
-        #     update_task()
-        
+         
     return render_template("index.html", pomodoro_duration=pomodoro_duration, projects=projects, tasks=tasks, project_dict=project_dict)
+
+@app.route('/add_task', methods=['POST'])
+def add_task():
+    if not request.form.get('task_name'):
+        return "failed to get task name"
+    if not request.form.get('task_duration'):
+        task_duration = 0
+    if not request.form.get('parent_project') or request.form.get('parent-project') == '':
+        parent_project = ''
+
+    task_name = request.form.get('task_name')
+    task_duration = request.form.get('task_duration')
+    parent_project = request.form.get('parent_project')
+
+    user_id = session.get("user_id")
+    if not user_id:
+        return jsonify({'status': 'error', 'message': 'User not logged in'})
+
+    if parent_project == '':
+        db.execute(
+            "INSERT INTO tasks (user_id, name, duration) VALUES (?, ?, ?)",
+            session["user_id"], task_name, task_duration)
+    else:
+        db.execute( 
+            "INSERT INTO tasks (user_id, name, duration, project_id) VALUES (?, ?, ?, ?)",
+              session["user_id"], task_name, task_duration, parent_project)
+
+    task_id = db.execute("SELECT last_insert_rowid()")[0]['last_insert_rowid()']
+    
+    response = {
+        'user_id': user_id,
+        'task_id': task_id,
+        'task_name': task_name,
+        'task_duration': task_duration,
+        'parent_project': parent_project,
+        'status': 'success',
+        'message': 'Task added successfully'
+    }
+    return jsonify(response)
+
+@app.route('/edit_task', methods=['POST'])
+@login_required
+def edit_task():
+    task_id = request.form.get('task_id')
+    task_name = request.form.get('task_name')
+    task_duration = request.form.get('task_duration')
+    task_status = request.form.get('task_status')
+    task_priority = request.form.get('task_priority')
+    parent_project = request.form.get('parent_project')
+
+    if not parent_project or parent_project == '':
+        parent_project = None
+    else:
+        # Verify if the parent project exists
+        project_exists = db.execute("SELECT id FROM projects WHERE id = ?", parent_project)
+        if not project_exists:
+            parent_project = None
+
+    try:
+        # Update the task in the database
+        if parent_project is None:
+            db.execute(
+                "UPDATE tasks SET name = ?, duration = ?, status = ?, priority = ? WHERE id = ? AND user_id = ?",
+                task_name, task_duration, task_status, task_priority, task_id, session["user_id"]
+            )
+        else:
+            db.execute(
+                "UPDATE tasks SET name = ?, duration = ?, status = ?, priority = ?, project_id = ? WHERE id = ? AND user_id = ?",
+                task_name, task_duration, task_status, task_priority, parent_project, task_id, session["user_id"]
+            )
+        
+        # Prepare the response
+        response = {
+            'status': 'success',
+            'task_id': task_id,
+            'task_name': task_name,
+            'task_duration': task_duration,
+            'task_status': task_status,
+            'task_priority': task_priority,
+            'parent_project': parent_project,
+            'user_id': session["user_id"]
+        }
+        return jsonify(response)
+
+    except Exception as e:
+        # Handle any errors that occur
+        return jsonify({'status': 'error', 'message': str(e)})
+    
 
 @app.route("/login", methods =["GET", "POST"])
 def login():
@@ -98,7 +176,21 @@ def logout():
 @login_required
 def long():
     pomodoro_duration = 15 * 60
-    return render_template("long.html", pomodoro_duration=pomodoro_duration)
+
+    projects = db.execute(
+            "SELECT * FROM projects WHERE user_id = ?", session["user_id"]
+            )
+    
+    tasks = db.execute(
+        "SELECT * FROM tasks WHERE user_id = ?", session["user_id"]
+    )
+
+    project_dict = db.execute(
+        "SELECT id, name FROM projects WHERE projects.user_id = ? ",
+        session["user_id"]
+        )
+    
+    return render_template("long.html", pomodoro_duration=pomodoro_duration, project_dict=project_dict, tasks=tasks, projects=projects)
 
 @app.route("/projects", methods=["GET","POST"])
 @login_required
@@ -168,7 +260,21 @@ def register():
 @login_required
 def short():
     pomodoro_duration = 5 * 60
-    return render_template("short.html", pomodoro_duration=pomodoro_duration)
+
+    projects = db.execute(
+            "SELECT * FROM projects WHERE user_id = ?", session["user_id"]
+            )
+    
+    tasks = db.execute(
+        "SELECT * FROM tasks WHERE user_id = ?", session["user_id"]
+    )
+
+    project_dict = db.execute(
+        "SELECT id, name FROM projects WHERE projects.user_id = ? ",
+        session["user_id"]
+        )
+    
+    return render_template("short.html", pomodoro_duration=pomodoro_duration, projects=projects, tasks=tasks, project_dict=project_dict)
 
 @app.route("/tasks", methods=["GET", "POST"])
 @login_required
