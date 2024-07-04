@@ -12,11 +12,12 @@
                   <th scope="col">Status</th>
                   <th scope="col">Priority</th>
                   <th scope="col">Project</th>
+                  <th scope="col">Action</th>
               </tr>
           </thead>
-          <tbody>
+          <tbody id="taskTableBody">
             {% for task in tasks %}
-          </tr>
+          <tr>
               <td>{{ task.name }}</td>
               <td>{{ task.due_date }}</td>
               <td>{{ task.status}}</td>
@@ -30,6 +31,8 @@
               <td>None</td>
             {% endif %}
             {% endfor %}
+              <td><i class="bi bi-pen-fill"></i>
+                <i class="bi bi-check2-square"></i></td>
           </tr>
           </tbody>
         </table>

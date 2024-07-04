@@ -166,6 +166,16 @@ $(document).ready(function(){
                                     </div>
                                 </div>
                             </div>`;
+          let newTaskRowHtml = `
+                            data-bs-toggle="modal" data-bs-target="#editTaskModal-${response.task_id}" data-task-id="${response.task_id}><tr class="clickable-row" id="taskRow-${response.task_id}" data-bs-toggle="modal" data-bs-target="#editTaskModal-${response.task_id}" data-task-id="${response.task_id}">
+                              <td>${response.task_name}</td>
+                              <td>${response.task_duration}</td>
+                              <td>${response.task_status}</td>
+                              <td>${response.task_priority}</td>
+                              <td>${response.parent_project ? response.parent_project_name : 'None'}</td>
+                            </tr>`;
+
+          $('#taskTableBody').append(newTaskRowHtml);
           $('#tasks').append(newTaskHtml);
           $('#task_name').val('');
           $('#task_duration').val('');
@@ -182,6 +192,7 @@ $(document).ready(function(){
   });
 });
 
+// Handle task editing without reloading page
 function bindEditTaskForm(task_id) {
   $(`#edit-task-form-${task_id}`).on('submit', function(event) {
     event.preventDefault();
@@ -205,7 +216,7 @@ function bindEditTaskForm(task_id) {
       },
       success: function(response) {
         if (response.status === 'success') {
-          let taskCard = $(`#task-card-${task_id}`);
+          let taskCard = $(`#task-card-${response.task_id}`);
           taskCard.find('.task-name').text(response.task_name);
           taskCard.find('.task-duration').text(response.task_duration);
           taskCard.find('.task-status').text(response.task_status);
@@ -220,6 +231,9 @@ function bindEditTaskForm(task_id) {
           }
 
           $(`#editTaskModal-${task_id}`).modal('hide');
+
+          let anchorTag = $( `#task-card-${response.task_id} `);
+          anchorTag.find('.task-name').text(response.task_name);
         } else {
           alert(response.message);
         }
@@ -236,3 +250,4 @@ $('form[name="edit_task_form"]').each(function() {
   let task_id = $(this).find('input[name="task_id"]').val();
   bindEditTaskForm(task_id);
 });
+

@@ -34,25 +34,27 @@
     </div>
 </div>
 
-<!--Create a new card for new tasks-->
 <div id="tasks">
-    <!--New task cards are made here-->
+    <!-- New task cards are appended here by JavaScript -->
 </div>
-<!-- Embed the created cards on the index page to handle page reload-->
+
+<!-- Embed the created cards on the index page to handle page reload -->
 {% for task in tasks %}
     <div class="row pt-2">
         <div class="col-md-4 offset-md-4">
-            <a href="#" class="text-dark" data-bs-toggle="modal" data-bs-target="#editTaskModal">
+            <a href="#" class="text-dark" id="task-card-{{ task.id }}" data-bs-toggle="modal" data-bs-target="#editTaskModal-{{ task.id }}" data-task-id="{{ task.id }}">
                 <div class="card text-bg-secondary task">
                     <div class="card-body">
-                        <span class="text-light fw-bold">{{ task.name }}</span>
+                        <span class="text-light fw-bold task-name">{{ task.name }}</span>
                     </div>
-            </div>
+                </div>
             </a>
         </div>
     </div>
-
-{% include "edit-task-modal.html" %}
+    <!-- Include the edit-task-modal.html and pass the task as context -->
+    {% with task=task %}
+        {% include "edit-task-modal.html" %}
+    {% endwith %}
 {% endfor %}
 
 <div class="row pt-2">
@@ -67,6 +69,7 @@
     </div>
 </div>
 </div>
+
 
 {% include "task-modal.html" %}
 
