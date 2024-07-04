@@ -22,18 +22,26 @@
               <td>{{ task.due_date }}</td>
               <td>{{ task.status}}</td>
               <td>{{ task.priority}}</td>
-              {% for project in project_dict %}
-                {% if project.id == task.project_id%}
-                  <td>{{ project.name }}</td>
-                {% endif %}
-              {% endfor %}
-              {% if task.project_id == None %}
-              <td>None</td>
-            {% endif %}
-            {% endfor %}
-              <td><i class="bi bi-pen-fill"></i>
-                <i class="bi bi-check2-square"></i></td>
+              <td>
+                {% for project in project_dict %}
+                  {% if project.id == task.project_id%}
+                  {{ project.name }}
+                  {% endif %}
+                  {% endfor %}
+                  {% if task.project_id == None %}
+                  None
+                  {% endif %}
+              </td>
+            <td>
+              <a href="" class="text-dark" data-bs-toggle="modal" data-bs-target="#editTaskModal-{{ task.id }}" data-task-id="{{ task.id }}"><i class="bi bi-pen-fill"></i></a>
+              <a><i class="bi bi-check2-square"></i></a>
+            </td>
           </tr>
+            <!-- Include the edit-task-modal.html and pass the task as context -->
+            {% with task=task %}
+               {% include "edit-task-modal.html" %}
+            {% endwith %}
+            {% endfor %}
           </tbody>
         </table>
     </div>
@@ -43,6 +51,7 @@
         </div>
     </div>
 </div>
+
 {% include "task-modal.html" %}
 
 {% endblock %}

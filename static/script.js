@@ -173,10 +173,69 @@ $(document).ready(function(){
                               <td>${response.task_status}</td>
                               <td>${response.task_priority}</td>
                               <td>${response.parent_project ? response.parent_project_name : 'None'}</td>
+                              <td><a href="" class="text-dark" data-bs-toggle="modal" data-bs-target="#editTaskModal-${response.task_id}" data-task-id="${response.task_id}"><i class="bi bi-pen-fill"></i></a>
+                                  <a><i class="bi bi-check2-square"></i></a>
+                                </td>
                             </tr>`;
+          let editTaskModal = `<div id="editTaskModal-${response.task_id}" class="modal fade" tabindex="-1">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Edit Task</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form id="edit-task-form-${response.task_id}" name="edit_task_form" method="post">
+                                                <input type="hidden" name="form_id" value="edit_task_form">
+                                                <input type="hidden" id="edit_task_id" name="task_id" value="${response.task_id}">
+                                                <div class="mb-3">
+                                                    <label for="edit_task_name-${response.task_id}" class="form-label">Task Name</label>
+                                                    <input type="text" class="form-control" id="edit_task_name-${response.task_id}" name="edit_task_name" value="${response.task_name}" required>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="edit_task_duration-${response.task_id}" class="form-label">Duration (minutes)</label>
+                                                    <input type="number" class="form-control" id="edit_task_duration-${response.task_id}" name="edit_task_duration" value="${response.task_duration}">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="edit_status-${response.task_id}" class="form-label">Status</label>
+                                                    <select id="edit_status-${response.task_id}" name="edit_status" class="form-select">
+                                                        <option selected>Not Started</option>
+                                                        <option value="Not Started">Not Started</option>
+                                                        <option value="In Progress">In Progress</option>
+                                                        <option value="Finished">Finished</option>
+                                                    </select>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="edit_priority-${response.task_id}" class="form-label">Priority</label>
+                                                    <select id="edit_priority-${response.task_id}" name="edit_priority" class="form-select">
+                                                        <option selected>Low</option>
+                                                        <option value="Low">Low</option>
+                                                        <option value="Medium">Medium</option>
+                                                        <option value="High">High</option>
+                                                    </select>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="edit_parent_project-${response.task_id}" class="form-label">Parent Project</label>
+                                                    <select id="edit_parent_project-${response.task_id}" name="edit_parent_project" class="form-select">
+                                                          <option value="" selected>No Parent Project</option>
+                                                          {% for project in projects %}
+                                                          <option value="{{ project.id }}">{{ project.name }}</option>
+                                                          {% endfor %}
+                                                    </select>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                    <button type="submit" class="btn btn-primary">Save changes</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>`;
 
           $('#taskTableBody').append(newTaskRowHtml);
           $('#tasks').append(newTaskHtml);
+          $('#editTaskModal').append(editTaskModal);
           $('#task_name').val('');
           $('#task_duration').val('');
           $('#parent_project').val('');
