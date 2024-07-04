@@ -17,7 +17,7 @@
           </thead>
           <tbody id="taskTableBody">
             {% for task in tasks %}
-          <tr>
+          <tr id="{{ task.id }}">
               <td>{{ task.name }}</td>
               <td>{{ task.due_date }}</td>
               <td>{{ task.status}}</td>
@@ -33,7 +33,7 @@
                   {% endif %}
               </td>
             <td>
-              <a href="" class="text-dark" data-bs-toggle="modal" data-bs-target="#editTaskModal-{{ task.id }}" data-task-id="{{ task.id }}"><i class="bi bi-pen-fill"></i></a>
+              <a href="#" class="text-dark" data-bs-toggle="modal" data-bs-target="#editTaskModal-{{ task.id }}" data-task-id="{{ task.id }}"><i class="bi bi-pen-fill"></i></a>
               <a><i class="bi bi-check2-square"></i></a>
             </td>
           </tr>
@@ -51,7 +51,7 @@
         </div>
     </div>
 </div>
-
+<div id="taskPageTasks"></div>
 {% include "task-modal.html" %}
 
 {% endblock %}

@@ -65,6 +65,8 @@ def add_task():
         'task_id': task_id,
         'task_name': task_name,
         'task_duration': task_duration,
+        'task_status': 'In Progress',
+        'task_priority': 'Medium',
         'parent_project': parent_project,
         'status': 'success',
         'message': 'Task added successfully'
@@ -74,12 +76,12 @@ def add_task():
 @app.route('/edit_task', methods=['POST'])
 @login_required
 def edit_task():
-    task_id = request.form.get('task_id')
-    task_name = request.form.get('task_name')
-    task_duration = request.form.get('task_duration')
-    task_status = request.form.get('task_status')
-    task_priority = request.form.get('task_priority')
-    parent_project = request.form.get('parent_project')
+    task_id = request.form.get('edit_task_id')
+    task_name = request.form.get('edit_task_name')
+    task_duration = request.form.get('edit_task_duration')
+    task_status = request.form.get('edit_task_status')
+    task_priority = request.form.get('edit_task_priority')
+    parent_project = request.form.get('edit_parent_project')
 
     if not parent_project or parent_project == '':
         parent_project = None
@@ -222,11 +224,8 @@ def short():
 @app.route("/tasks", methods=["GET", "POST"])
 @login_required
 def tasks():
-    # Handle the addition of a new task
-    if request.method == "POST":
-        new_task()
-
-    tasks = db.execute("SELECT name, project_id, due_date, status, priority FROM tasks WHERE user_id = ?", session["user_id"])
+    
+    tasks = db.execute("SELECT id, name, project_id, due_date, status, priority FROM tasks WHERE user_id = ?", session["user_id"])
     projects = db.execute("SELECT * FROM projects WHERE user_id = ?", session["user_id"])
     project_dict = db.execute("SELECT id, name FROM projects WHERE projects.user_id = ?", session["user_id"])
 

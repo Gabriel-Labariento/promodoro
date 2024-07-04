@@ -1,3 +1,4 @@
+{% with task=task %}
 <div id="editTaskModal-{{ task.id }}" class="modal fade" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -6,7 +7,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="edit-task-form-{{ task.id }}" name="edit_task_form" method="post">
+                <form id="edit-task-form-{{ task.id }}" name="edit_task_form" method="post" action="/edit_task">
                     <input type="hidden" name="form_id" value="edit_task_form">
                     <input type="hidden" id="edit_task_id" name="task_id" value="{{ task.id }}">
                     <div class="mb-3">
@@ -53,3 +54,5 @@
         </div>
     </div>
 </div>
+
+{% endwith %}   

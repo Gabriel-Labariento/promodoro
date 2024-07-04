@@ -1,3 +1,5 @@
+// Javascript made with the help of ChatGPT
+
 // Handle the pomodoro timers
 document.addEventListener('DOMContentLoaded', (event) => {
   const startButton = document.getElementById('pomoStart');
@@ -89,6 +91,8 @@ $(document).ready(function(){
     let task_name = $('#task_name').val();
     let task_duration = $('#task_duration').val();
     let parent_project = $('#parent_project').val();
+    let task_status = 'In Progress';
+    let task_priority = 'Medium'; 
 
     $.ajax({
       type: 'POST',
@@ -96,7 +100,9 @@ $(document).ready(function(){
       data: {
         task_name: task_name,
         task_duration: task_duration,
-        parent_project: parent_project
+        parent_project: parent_project,
+        task_status: task_status,
+        task_priority: task_priority
       },
       success: function(response) {
         if (response.status === 'success') {
@@ -167,9 +173,9 @@ $(document).ready(function(){
                                 </div>
                             </div>`;
           let newTaskRowHtml = `
-                            data-bs-toggle="modal" data-bs-target="#editTaskModal-${response.task_id}" data-task-id="${response.task_id}><tr class="clickable-row" id="taskRow-${response.task_id}" data-bs-toggle="modal" data-bs-target="#editTaskModal-${response.task_id}" data-task-id="${response.task_id}">
+                            <tr class="clickable-row" id="taskRow-${response.task_id}" data-bs-toggle="modal" data-bs-target="#editTaskModal-${response.task_id}" data-task-id="${response.task_id}">
                               <td>${response.task_name}</td>
-                              <td>${response.task_duration}</td>
+                              <td>None</td>
                               <td>${response.task_status}</td>
                               <td>${response.task_priority}</td>
                               <td>${response.parent_project ? response.parent_project_name : 'None'}</td>
@@ -185,7 +191,7 @@ $(document).ready(function(){
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
-                                            <form id="edit-task-form-${response.task_id}" name="edit_task_form" method="post">
+                                            <form id="edit-task-form-${response.task_id}" name="edit_task_form" method="post" action="/edit_task">
                                                 <input type="hidden" name="form_id" value="edit_task_form">
                                                 <input type="hidden" id="edit_task_id" name="task_id" value="${response.task_id}">
                                                 <div class="mb-3">
@@ -235,6 +241,7 @@ $(document).ready(function(){
 
           $('#taskTableBody').append(newTaskRowHtml);
           $('#tasks').append(newTaskHtml);
+          $('#taskPageTasks').append(editTaskModal);
           $('#editTaskModal').append(editTaskModal);
           $('#task_name').val('');
           $('#task_duration').val('');
@@ -251,62 +258,57 @@ $(document).ready(function(){
   });
 });
 
-// Handle task editing without reloading page
-function bindEditTaskForm(task_id) {
-  $(`#edit-task-form-${task_id}`).on('submit', function(event) {
-    event.preventDefault();
+    // Function to handle task editing without reloading page
+    function bindEditTaskForm(task_id) {
+      $(`#edit-task-form-${response.task_id}`).on('submit', function(event) {
+          event.preventDefault();
 
-    let task_name = $(`#edit_task_name-${task_id}`).val();
-    let task_duration = $(`#edit_task_duration-${task_id}`).val();
-    let task_status = $(`#edit_status-${task_id}`).val();
-    let task_priority = $(`#edit_priority-${task_id}`).val();
-    let parent_project = $(`#edit_parent_project-${task_id}`).val();
+          let task_name = $(`#edit_task_name-${response.task_id}`).val();
+          let task_duration = $(`#edit_task_duration-${response.task_id}`).val();
+          let task_status = $(`#edit_status-${response.task_id}`).val();
+          let task_priority = $(`#edit_priority-${response.task_id}`).val();
+          let parent_project = $(`#edit_parent_project-${response.task_id}`).val();
 
-    $.ajax({
-      type: 'POST',
-      url: '/edit_task',
-      data: {
-        task_id: task_id,
-        task_name: task_name,
-        task_duration: task_duration,
-        task_status: task_status,
-        task_priority: task_priority,
-        parent_project: parent_project
-      },
-      success: function(response) {
-        if (response.status === 'success') {
-          let taskCard = $(`#task-card-${response.task_id}`);
-          taskCard.find('.task-name').text(response.task_name);
-          taskCard.find('.task-duration').text(response.task_duration);
-          taskCard.find('.task-status').text(response.task_status);
-          taskCard.find('.task-priority').text(response.task_priority);
+          $.ajax({
+              type: 'POST',
+              url: '/edit_task',
+              data: {
+                  task_id: task_id,
+                  task_name: task_name,
+                  task_duration: task_duration,
+                  task_status: task_status,
+                  task_priority: task_priority,
+                  parent_project: parent_project
+              },
+              success: function(response) {
+                  if (response.status === 'success') {
+                      // Update task details in the UI
+                      $(`#taskRow-${task_id}`).find('.task-name').text(response.task_name);
+                      $(`#taskRow-${task_id}`).find('.task-duration').text(response.task_duration);
+                      $(`#taskRow-${task_id}`).find('.task-status').text(response.task_status);
+                      $(`#taskRow-${task_id}`).find('.task-priority').text(response.task_priority);
+                      $(`#editTaskModal-${task_id}`).modal('hide');
 
-          // Update the parent project name if necessary
-          if (response.parent_project) {
-            let projectName = $(`#edit_parent_project-${task_id} option[value="${response.parent_project}"]`).text();
-            taskCard.find('.task-project').text(projectName);
-          } else {
-            taskCard.find('.task-project').text('No Parent Project');
-          }
+                      // Update the parent project name if necessary
+                      if (response.parent_project) {
+                          let projectName = $(`#edit_parent_project-${task_id} option[value="${response.parent_project}"]`).text();
+                          $(`#taskRow-${task_id}`).find('.task-project').text(projectName);
+                      } else {
+                          $(`#taskRow-${task_id}`).find('.task-project').text('No Parent Project');
+                      }
+                  } else {
+                      alert(response.message);
+                  }
+              },
+              error: function(error) {
+                  console.log(error);
+              }
+          });
+      });
+  }
 
-          $(`#editTaskModal-${task_id}`).modal('hide');
-
-          let anchorTag = $( `#task-card-${response.task_id} `);
-          anchorTag.find('.task-name').text(response.task_name);
-        } else {
-          alert(response.message);
-        }
-      },
-      error: function(error) {
-        console.log(error);
-      }
-    });
+  // Bind the edit task form submit event for existing tasks on page load
+  $('form[name="edit_task_form"]').each(function() {
+      let task_id = $(this).find('input[name="task_id"]').val();
+      bindEditTaskForm(task_id);
   });
-}
-
-// Bind the edit task form submit event for existing tasks on page load
-$('form[name="edit_task_form"]').each(function() {
-  let task_id = $(this).find('input[name="task_id"]').val();
-  bindEditTaskForm(task_id);
-});
-
