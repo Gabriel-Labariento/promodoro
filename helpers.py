@@ -94,29 +94,43 @@ def new_project():
         )
     return None
 
-# def update_task():
-#     # Get task name, duration, and parent project if available
-#     task_name = request.form.get("edit-task-name")
+def update_task():
+    # Get task name, duration, and parent project if available
+    task_id = request.form.get("edit_task_id")
+    task_name = request.form.get("edit_task_name")
         
-#     # Handle no inputs
-#     if not request.form.get("edit-task-duration"):
-#         task_duration = 0
+    # Handle no inputs
+    if not request.form.get("edit_task_duration"):
+        task_duration = 0
 
-#     # Get data from database
+    # Get data from database
 
-#     projects = db.execute(
-#         "SELECT * FROM projects WHERE user_id = ?", session["user_id"]
-#         )
+    projects = db.execute(
+        "SELECT * FROM projects WHERE user_id = ?", session["user_id"]
+        )
 
-#     # Get inputs if there are any
-#     task_duration = request.form.get("edit-task-duration")
-#     status = request.form.get("edit-status")
-#     priority = request.form.get("edit-priority")
-#     parent_project = request.form.get("edit-parent-project")
-
-#     # Add the task to the database
-#     db.execute(
-#         "UPDATE tasks (name, duration, status, priority project_id) VALUES(?, ?, ?, ?, ?, ?) WHERE user_id = ?",
-#         task_name, task_duration, status, priority, parent_project, session["user_id"]
-#         )
-#     return None
+    # Get inputs if there are any
+    task_duration = request.form.get("edit_task_duration")
+    task_status = request.form.get("edit_task_status")
+    task_priority = request.form.get("edit_task_priority")
+    parent_project = request.form.get("edit_parent_project")
+    user_id = session["user_id"]
+    
+    # Add the task to the database
+    db.execute(
+        "UPDATE tasks (name, duration, status, priority project_id) VALUES(?, ?, ?, ?, ?, ?) WHERE user_id = ? AND id = ?",
+        task_name, task_duration, task_status, task_priority, parent_project, user_id, task_id
+        )
+    
+    response = {
+        'user_id' : user_id,
+        'task_name' : task_name,
+        'task_duration' : task_duration,
+        'parent_project' : parent_project,
+        'task_status' : task_status,
+        'task_priority' : task_priority,
+        'status' : 'success',
+        'message' : 'task edited successfully'
+    }
+    
+    return jsonify(response)

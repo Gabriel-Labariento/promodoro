@@ -4,7 +4,7 @@ from cs50 import SQL
 from flask import Flask, session, redirect, url_for, request, render_template, jsonify
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
-from helpers import login_required, new_task, new_project
+from helpers import login_required, new_project, update_task
 
 app = Flask(__name__)
 
@@ -82,6 +82,7 @@ def edit_task():
     task_status = request.form.get('edit_task_status')
     task_priority = request.form.get('edit_task_priority')
     parent_project = request.form.get('edit_parent_project')
+    task_due = request.form.get('edit_task_due')
 
     if not parent_project or parent_project == '':
         parent_project = None
@@ -94,9 +95,9 @@ def edit_task():
     try:
         # Update the task in the database
         if parent_project is None:
-            db.execute("UPDATE tasks SET name = ?, duration = ?, status = ?, priority = ? WHERE id = ? AND user_id = ?", task_name, task_duration, task_status, task_priority, task_id, session["user_id"])
+            db.execute("UPDATE tasks SET name = ?, duration = ?, status = ?, priority = ?, due_date = ? WHERE id = ? AND user_id = ?", task_name, task_duration, task_status, task_priority, task_due, task_id, session["user_id"])
         else:
-            db.execute("UPDATE tasks SET name = ?, duration = ?, status = ?, priority = ?, project_id = ? WHERE id = ? AND user_id = ?", task_name, task_duration, task_status, task_priority, parent_project, task_id, session["user_id"])
+            db.execute("UPDATE tasks SET name = ?, duration = ?, status = ?, priority = ?, project_id = ?, due_date = ? WHERE id = ? AND user_id = ?", task_name, task_duration, task_status, task_priority, parent_project, task_due, task_id, session["user_id"])
 
         response = {
             'status': 'success',
@@ -105,6 +106,7 @@ def edit_task():
             'task_duration': task_duration,
             'task_status': task_status,
             'task_priority': task_priority,
+            'task_due': task_due,
             'parent_project': parent_project,
             'user_id': session["user_id"]
         }
@@ -208,7 +210,7 @@ def register():
 
     return render_template("register.html")
 
-@app.route("/short")
+@app.route("/short", methods=["GET", "POST"])
 @login_required
 def short():
     # Set duration of pomodoro timer for short break
@@ -224,9 +226,17 @@ def short():
 @app.route("/tasks", methods=["GET", "POST"])
 @login_required
 def tasks():
-    
+
     tasks = db.execute("SELECT id, name, project_id, due_date, status, priority FROM tasks WHERE user_id = ?", session["user_id"])
     projects = db.execute("SELECT * FROM projects WHERE user_id = ?", session["user_id"])
     project_dict = db.execute("SELECT id, name FROM projects WHERE projects.user_id = ?", session["user_id"])
+
+    # if request.method == "POST":
+    #     if 'save_changes' in request.form:
+    #         edit_task()   
+    #         tasks = db.execute("SELECT id, name, project_id, due_date, status, priority FROM tasks WHERE user_id = ?", session["user_id"])
+    #         projects = db.execute("SELECT * FROM projects WHERE user_id = ?", session["user_id"])
+    #         project_dict = db.execute("SELECT id, name FROM projects WHERE projects.user_id = ?", session["user_id"])
+    #         return render_template("tasks.html", tasks=tasks, projects=projects, project_dict=project_dict)
 
     return render_template("tasks.html", tasks=tasks, projects=projects, project_dict=project_dict)

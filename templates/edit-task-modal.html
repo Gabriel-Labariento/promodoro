@@ -1,4 +1,4 @@
-{% with task=task %}
+
 <div id="editTaskModal-{{ task.id }}" class="modal fade" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -7,9 +7,9 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="edit-task-form-{{ task.id }}" name="edit_task_form" method="post" action="/edit_task">
+                <form id="edit-task-form-{{ task.id }}" name="edit_task_form" method="post">
                     <input type="hidden" name="form_id" value="edit_task_form">
-                    <input type="hidden" id="edit_task_id" name="task_id" value="{{ task.id }}">
+                    <input type="hidden" id="edit_task_id-{{ task.id}}" name="edit_task_id" value="{{ task.id }}">
                     <div class="mb-3">
                         <label for="edit_task_name-{{ task.id }}" class="form-label">Task Name</label>
                         <input type="text" class="form-control" id="edit_task_name-{{ task.id }}" name="edit_task_name" value="{{ task.name }}" required>
@@ -19,8 +19,12 @@
                         <input type="number" class="form-control" id="edit_task_duration-{{ task.id }}" name="edit_task_duration" value="{{ task.duration }}">
                     </div>
                     <div class="mb-3">
+                        <label for="edit_task_due-{{ task.id }}" class="form-label">Due Date</label>
+                        <input type="date" class="form-control" id="edit_task_due-{{ task.id }}" name="edit_task_due" value="{{ task.due_date }}">
+                    </div>
+                    <div class="mb-3">
                         <label for="edit_status-{{ task.id }}" class="form-label">Status</label>
-                        <select id="edit_status-{{ task.id }}" name="edit_status" class="form-select">
+                        <select id="edit_status-{{ task.id }}" name="edit_task_status" class="form-select">
                             <option selected>{{ task.status }}</option>
                             <option value="Not Started">Not Started</option>
                             <option value="In Progress">In Progress</option>
@@ -29,7 +33,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="edit_priority-{{ task.id }}" class="form-label">Priority</label>
-                        <select id="edit_priority-{{ task.id }}" name="edit_priority" class="form-select">
+                        <select id="edit_priority-{{ task.id }}" name="edit_task_priority" class="form-select">
                             <option selected>{{ task.priority }}</option>
                             <option value="Low">Low</option>
                             <option value="Medium">Medium</option>
@@ -47,12 +51,10 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save changes</button>
+                        <button type="submit" name="save_changes" value="submit" class="btn btn-primary">Save changes</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
-
-{% endwith %}   

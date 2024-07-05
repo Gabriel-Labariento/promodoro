@@ -17,7 +17,7 @@
           </thead>
           <tbody id="taskTableBody">
             {% for task in tasks %}
-          <tr id="{{ task.id }}">
+          <tr id="taskRow-{{ task.id }}">
               <td>{{ task.name }}</td>
               <td>{{ task.due_date }}</td>
               <td>{{ task.status}}</td>
