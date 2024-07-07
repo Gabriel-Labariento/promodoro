@@ -106,17 +106,21 @@ $(document).ready(function(){
       },
       success: function(response) {
         if (response.status === 'success') {
-          let newTaskHtml = `<div class="row pt-2">
+          let newTaskHtml = `<div id="index-row-${response.task_id}" class="row pt-2">
                                 <div class="col-md-4 offset-md-4">
-                                    <a href="#" id="task-card-${response.task_id}" class="text-dark" data-bs-toggle="modal" data-bs-target="#editTaskModal-${response.task_id}" data-task-id="${response.task_id}">
-                                        <div class="card text-bg-secondary task">
-                                            <div class="card-body">
-                                                <span class="text-light fw-bold task-name">${response.task_name}</span>
-                                            </div>
+                                    <div class="card text-bg-secondary task">
+                                        <div class="card-body d-flex justify-content-between align-items-center">
+                                            <a href="#" class="text-light fw-bold task-name" id="task-card-${response.task_id}" data-bs-toggle="modal" data-bs-target="#editTaskModal-${response.task_id}" data-task-id="${response.task_id}">
+                                                ${response.task_name}
+                                            </a>
+                                            <form action="/remove_task" name="remove_task" method="post">
+                                                <input type="hidden" name="remove_task_button" value="${response.task_id}">
+                                                <button class="btn btn-light" type="submit"><i class="bi bi-check2-square"></i></button>
+                                            </form>
                                         </div>
-                                    </a>
+                                    </div>
                                 </div>
-                            </div>
+                            </div>    
                             <div id="editTaskModal-${response.task_id}" class="modal fade" tabindex="-1">
                                 <div class="modal-dialog modal-dialog-centered">
                                     <div class="modal-content">
@@ -231,8 +235,33 @@ $(document).ready(function(){
                                     </div>
                                 </div>
                             </div>`;
+                            let newTaskRowHtml = `
+                            <tr id="taskRow-${response.task_id}" data-task-id="${response.task_id}">
+                              <td>${response.task_name}</td>
+                              <td></td>
+                              <td>${response.task_status}</td>
+                              <td>${response.task_priority}</td>
+                              <td>${response.parent_project ? response.parent_project_name : 'None'}</td>
+                              <td>
+                               <div class="d-flex align-items-center">
+                                  <a href="#" class="text-dark" data-bs-toggle="modal" data-bs-target="#editTaskModal-${response.task_id}" data-task-id="${response.task_id}"><i class="bi bi-pen-fill"></i></a>
+                                  <form action="/remove_task" name="remove_task" method="post">
+                                    <input type="hidden" name="remove_task_button" value="${response.task_id}">
+                                  <button class="btn btn-light" type="submit"><i class="bi bi-check2-square"></i></button>
+                                  </form>
+                                </div>
+                             </td>
+                               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form id="edit-task-form-${response.task_id}" name="edit_task_form" method="post">
+                                            <form id="edit-task-form-${response.task_id}" name="edit_task_form" method="post" action="/edit_task">
+                                                <input type="hidden" name="form_id" value="edit_task_form">
+                                                <input type="hidden" id="edit_task_id" name="task_id" value="${response.task_id}">
+                                                <div class="mb-3"> `;
 
           $('#tasks').append(newTaskHtml);
+          $('#taskTableBody').append(newTaskRowHtml);
           $('#taskPageTasks').append(editTaskModal);
           $('#editTaskModal').append(editTaskModal);
           $('#task_name').val('');
@@ -250,61 +279,7 @@ $(document).ready(function(){
   });
 });
 
-  //   // Function to handle task editing without reloading page
-  //   function bindEditTaskForm(task_id) {
-  //     $(`#edit-task-form-${response.task_id}`).on('submit', function(event) {
-  //         event.preventDefault();
-
-  //         let task_name = $(`#edit_task_name-${response.task_id}`).val();
-  //         let task_duration = $(`#edit_task_duration-${response.task_id}`).val();
-  //         let task_status = $(`#edit_status-${response.task_id}`).val();
-  //         let task_priority = $(`#edit_priority-${response.task_id}`).val();
-  //         let parent_project = $(`#edit_parent_project-${response.task_id}`).val();
-
-  //         $.ajax({
-  //             type: 'POST',
-  //             url: '/edit_task',
-  //             data: {
-  //                 task_id: task_id,
-  //                 task_name: task_name,
-  //                 task_duration: task_duration,
-  //                 task_status: task_status,
-  //                 task_priority: task_priority,
-  //                 parent_project: parent_project
-  //             },
-  //             success: function(response) {
-  //                 if (response.status === 'success') {
-  //                     // Update task details in the UI
-  //                     $(`#taskRow-${task_id}`).find('.task-name').text(response.task_name);
-  //                     $(`#taskRow-${task_id}`).find('.task-duration').text(response.task_duration);
-  //                     $(`#taskRow-${task_id}`).find('.task-status').text(response.task_status);
-  //                     $(`#taskRow-${task_id}`).find('.task-priority').text(response.task_priority);
-  //                     $(`#editTaskModal-${task_id}`).modal('hide');
-
-  //                     // Update the parent project name if necessary
-  //                     if (response.parent_project) {
-  //                         let projectName = $(`#edit_parent_project-${task_id} option[value="${response.parent_project}"]`).text();
-  //                         $(`#taskRow-${task_id}`).find('.task-project').text(projectName);
-  //                     } else {
-  //                         $(`#taskRow-${task_id}`).find('.task-project').text('No Parent Project');
-  //                     }
-  //                 } else {
-  //                     alert(response.message);
-  //                 }
-  //             },
-  //             error: function(error) {
-  //                 console.log(error);
-  //             }
-  //         });
-  //     });
-  // }
-
-  // // Bind the edit task form submit event for existing tasks on page load
-  // $('form[name="edit_task_form"]').each(function() {
-  //     let task_id = $(this).find('input[name="task_id"]').val();
-  //     bindEditTaskForm(task_id);
-  // });
-
+// Handle task editing without reloading page
   $(document).ready(function() {
     $('body').on('submit', 'form[name="edit_task_form"]', function(event) {
       event.preventDefault();
@@ -319,8 +294,6 @@ $(document).ready(function(){
       let taskPriority = div.find('select[name="edit_task_priority"]').val();
       let parentProject = div.find('select[name="edit_parent_project"]').val();
   
-      console.log(taskId);
-
       $.ajax({
         type: 'POST',
         url: '/edit_task',
@@ -358,4 +331,38 @@ $(document).ready(function(){
       });
     });
   });
-  
+
+// Handle task clearing without reloading page
+$(document).ready(function() {
+  $('body').on('submit', 'form[name="remove_task"]', function(event) {
+    event.preventDefault();
+
+    let form = $(this);
+    let task_id = form.find('input[name="remove_task_button"]').val();
+    console.log(task_id);
+
+    $.ajax({
+      type: 'POST',
+      url: '/remove_task',
+      data: {
+        remove_task_button: task_id
+      },
+      success: function(response) {
+        if (response.status === 'success') {
+          let taskRow = $(`#taskRow-${response.task_id}`);
+          let indexRow = $(`#index-row-${response.task_id}`);
+          taskRow.remove();
+          indexRow.remove();
+
+        }
+        else {
+          alert(response.message);
+        }
+      },
+      error: function(error) {
+        console.log(error);
+      }
+      });
+    });
+  });
+

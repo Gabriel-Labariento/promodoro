@@ -39,17 +39,21 @@
     
     <!-- Embed the created cards on the index page to handle page reload -->
     {% for task in tasks %}
-        <div class="row pt-2">
-            <div class="col-md-4 offset-md-4">
-                <a href="#" class="text-dark" id="task-card-{{ task.id }}" data-bs-toggle="modal" data-bs-target="#editTaskModal-{{ task.id }}" data-task-id="{{ task.id }}">
-                    <div class="card text-bg-secondary task">
-                        <div class="card-body">
-                            <span class="text-light fw-bold task-name">{{ task.name }}</span>
-                        </div>
-                    </div>
-                </a>
+    <div id="index-row-{{ task.id }}" class="row pt-2">
+        <div class="col-md-4 offset-md-4">
+            <div class="card text-bg-secondary task">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <a href="#" class="text-light fw-bold task-name" id="task-card-{{ task.id }}" data-bs-toggle="modal" data-bs-target="#editTaskModal-{{ task.id }}" data-task-id="{{ task.id }}">
+                        {{ task.name }}
+                    </a>
+                    <form action="/remove_task" name="remove_task" method="post">
+                        <input type="hidden" name="remove_task_button" value="{{ task.id }}">
+                        <button class="btn btn-light" type="submit"><i class="bi bi-check2-square"></i></button>
+                    </form>
+                </div>
             </div>
         </div>
+    </div>    
         <!-- Include the edit-task-modal.html and pass the task as context -->
         {% with task=task %}
             {% include "edit-task-modal.html" %}

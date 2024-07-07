@@ -33,8 +33,13 @@
                   {% endif %}
               </td>
             <td>
-              <a href="#" class="text-dark" data-bs-toggle="modal" data-bs-target="#editTaskModal-{{ task.id }}" data-task-id="{{ task.id }}"><i class="bi bi-pen-fill"></i></a>
-              <a><i class="bi bi-check2-square"></i></a>
+              <div class="d-flex align-items-center">
+                <a href="#" class="text-dark" data-bs-toggle="modal" data-bs-target="#editTaskModal-{{ task.id }}" data-task-id="{{ task.id }}"><i class="bi bi-pen-fill"></i></a>
+                <form action="/remove_task" name="remove_task" method="post">
+                  <input type="hidden" name="remove_task_button" value="{{ task.id }}">
+                 <button class="btn btn-light" type="submit"><i class="bi bi-check2-square"></i></button>
+                </form>
+              </div>
             </td>
           </tr>
             <!-- Include the edit-task-modal.html and pass the task as context -->

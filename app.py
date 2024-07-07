@@ -115,6 +115,26 @@ def edit_task():
     except Exception as e:
         return jsonify({'status': 'error', 'message': str(e)})
 
+@app.route('/remove_task', methods=['POST'])
+@login_required
+def remove_task():
+    task_id = request.form.get("remove_task_button")
+    if task_id: 
+        try:
+            db.execute("DELETE FROM tasks WHERE id = ? AND user_id = ?", task_id, session["user_id"])
+
+            response = {
+                'status': 'success',
+                'task_id' : task_id
+            }
+            return jsonify(response)
+        
+        except Exception as e:
+            return jsonify({'status': 'error', 'message': str(e)})
+    else: 
+        return 'Error: Task ID not Found', 400
+    
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
     # Forget any user id
