@@ -1,0 +1,32 @@
+{% with tasks=tasks %}
+<div class="modal fade" id="project_info_{{ project.id }}" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5">{{ project.name }}</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <h6>Project Description</h6>
+            <p>{{ project.description }}</p>
+          <br>
+          <h6>Associated Tasks</h6>
+          <ul>
+            {% for task in tasks %}
+                {% if task.project_id == project.id %}
+                    {% set projectHasTasks = True%}
+                    <li>{{ task.name }}</li>
+                {% endif %}
+            {% endfor %}
+            {% if projectHasTasks == False %}
+                No associated tasks
+            {% endif %}
+        </ul>
+        </div>
+        <div class="modal-footer">
+          <button type="button" data-bs-dismiss="modal" class="btn btn-primary">Understood</button>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endwith %}

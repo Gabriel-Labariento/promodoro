@@ -12,17 +12,31 @@
               <th scope="col">Priority</th>
               <th scope="col">Start Date</th>
               <th scope="col">Due Date</th>
+              <th scope="col">Action</th>
           </tr>
       </thead>
       <tbody>
         {% for project in projects %}
-      </tr>
-          <td>{{ project.name }}</td>
+      <tr id="project-row-{{ project.id }}">
+          <td><a href="#" class="text-dark" data-bs-toggle="modal" data-bs-target="#project_info_{{ project.id }}" data-project-id="{{ project.id }}">{{ project.name }}</a></td>
           <td>{{ project.status }}</td>
           <td>{{ project.priority }}</td>
           <td>{{ project.start_date}}</td>
           <td>{{ project.due_date }}</td>
+          <td>
+              <div class="d-flex align-items-center">
+                <a href="#" class="text-dark" data-bs-toggle="modal" data-bs-target="#editProjectkModal-{{ project.id }}" data-project-id="{{ project.id }}"><i class="bi bi-pen-fill"></i></a>
+                <form action="/remove_project" name="remove_project" method="post">
+                  <input type="hidden" name="remove_project_button" value="{{ project.id }}">
+                <button class="btn btn-light" type="submit"><i class="bi bi-check2-square"></i></button>
+                </form>
+              </div>
+          </td>
       </tr>
+      {% with project=project %}
+               {% include "edit-project-modal.html" %}
+               {% include "project_info.html"%}
+            {% endwith %}
       {% endfor %}
       </tbody>
     </table>

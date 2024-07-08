@@ -1,5 +1,39 @@
 // Javascript made with the help of ChatGPT
 
+
+// Handle changing the length of timers
+// $(document).ready(function() {
+//   $('#settings_form').on('submit', function(event) {
+//     event.preventDefault();
+
+//     let form = $(this);
+//     let div = form.closest('.modal-body');
+//     let data = {
+//       pomodoroLength: div.find('input[name="pomodoroLength"]').val(),
+//       shortLength: div.find('input[name="shortLength"]').val(),
+//       longLength: div.find('input[name="longLength"]').val()
+//     };
+    
+//     $.ajax({
+//       type: 'POST',
+//       url: '/change_settings',
+//       data: JSON.stringify(data),
+//       contentType: 'application/json',
+//       success: function(response) {
+//         if (response.status === 'success') {
+//           console.log('Data sent successfully', response);
+//           $(`#settings_form`).modal('hide');
+//         } else {
+//           alert(response.message);
+//         }
+//       },
+//       error: function(error) {
+//         console.log(error);
+//       }
+//     });
+//   });
+// });
+
 // Handle the pomodoro timers
 document.addEventListener('DOMContentLoaded', (event) => {
   const startButton = document.getElementById('pomoStart');
@@ -366,3 +400,32 @@ $(document).ready(function() {
     });
   });
 
+// Handle project clearing without reloading page
+$(document).ready(function() {
+  $('body').on('submit', 'form[name="remove_project"]', function(event) {
+    event.preventDefault();
+
+    let form = $(this);
+    let project_id = form.find('input[name="remove_project_button"]').val();
+
+    $.ajax({
+      type: 'POST',
+      url: '/remove_project',
+      data: {
+        remove_project_button: project_id
+      },
+      success: function(response) {
+        if (response.status === 'success') {
+          let projectRow = $(`#project-row-${response.project_id}`);
+          projectRow.remove();
+        }
+        else {
+          alert(response.message);
+        }
+      },
+      error: function(error) {
+        console.log(error);
+      }
+      });
+    });
+  });

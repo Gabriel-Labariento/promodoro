@@ -13,6 +13,31 @@ from functools import wraps
 # Initialize database
 db = SQL("sqlite:///promodoro.db")
 
+def change_settings():
+    pomodoroLength = request.form.get("pomodoroLength")
+    if not pomodoroLength:
+        pomodoroLength = 25
+
+    shortLength = request.form.get("shortLength")
+    if not shortLength:
+        shortLength = 5
+
+    longLength = request.form.get("longLength")
+    if not longLength:
+        longLength = 15
+    
+    user_id = session["user_id"]
+
+    response = {
+        'user_id': user_id,
+        'pomodoroLength': pomodoroLength,
+        'shortLength': shortLength,
+        'longLength': longLength,
+        'status': 'success'
+    }
+    return jsonify(response)
+
+
 def login_required(f):
     """
     Decorate routes to require login.
@@ -66,7 +91,7 @@ def new_task():
 def new_project():
     # Get project name, description, and due date
     project_name = request.form.get("project-name")
-        
+    
     # Handle no inputs
     if not request.form.get("project-description"):
         project_description = ""
@@ -79,20 +104,36 @@ def new_project():
         due_date = date.today()
         due_date = due_date.strftime("%B %d, %Y")
 
-    # Handle parent project selection
-    # Get data from database
+    if not request.form.get("project_status"):
+        project_status = "In Progress"
+    project_status = request.form.get("project_status")
+
+    if not request.form.get("project_priority"):
+        project_priority = "Medium"
+    project_priority = request.form.get("project_priority")
+
 
     # Get inputs if there are any
     project_description = request.form.get("project-description")
     due_date = request.form.get("due-date")
     start_date = request.form.get("start-date")
 
-    # Add the projects to the database
-    db.execute(
-        "INSERT INTO projects (user_id, name, description, start_date, due_date) VALUES(?, ?, ?, ?, ?)",
-        session["user_id"], project_name, project_description, start_date, due_date
-        )
-    return None
+    if not request.form.get("form_id"):
+        # Add the projects to the database
+        db.execute(
+            "INSERT INTO projects (user_id, name, description, start_date, due_date, status, priority) VALUES(?, ?, ?, ?, ?, ?, ?)",
+            session["user_id"], project_name, project_description, start_date, due_date, project_status, project_priority
+            )
+        
+    else:
+        project_id = request.form.get("edit_project_id")
+        # Update the project data in the database
+        db.execute(
+            "UPDATE projects SET name = ?, description = ?, start_date = ?, due_date = ?, status = ?, priority = ? WHERE user_id = ? AND id = ?",
+            project_name, project_description, start_date, due_date, project_status, project_priority, session["user_id"], project_id
+            )
+    
+    return redirect("/projects")
 
 def update_task():
     # Get task name, duration, and parent project if available

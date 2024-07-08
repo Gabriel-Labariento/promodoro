@@ -4,7 +4,7 @@ from cs50 import SQL
 from flask import Flask, session, redirect, url_for, request, render_template, jsonify
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
-from helpers import login_required, new_project, update_task
+from helpers import login_required, new_project, change_settings
 
 app = Flask(__name__)
 
@@ -21,10 +21,12 @@ db = SQL("sqlite:///promodoro.db")
 @app.route("/", methods=["GET", "POST"])
 @login_required
 def index():
-    # Set duration of pomodoro timer
+    if request.method == "POST":
+        response = change_settings()
+        return
     pomodoro_duration = 25 * 60
-
     # Retrieve projects and tasks for the logged-in user
+
     projects = db.execute("SELECT * FROM projects WHERE user_id = ?", session["user_id"])
     tasks = db.execute("SELECT * FROM tasks WHERE user_id = ?", session["user_id"])
     project_dict = db.execute("SELECT id, name FROM projects WHERE projects.user_id = ?", session["user_id"])
@@ -114,6 +116,24 @@ def edit_task():
 
     except Exception as e:
         return jsonify({'status': 'error', 'message': str(e)})
+    
+@app.route('/remove_project', methods=['POST'])
+@login_required
+def remove_project():
+    project_id = request.form.get("remove_project_button")
+    if project_id:
+        try:
+            db.execute("DELETE FROM projects WHERE id = ? AND user_id = ?", project_id, session["user_id"])
+            response = {
+                'status': 'success',
+                'project_id' : project_id
+            }
+            return jsonify(response)
+        
+        except Exception as e:
+            return jsonify({'status': 'error', 'message': str(e)})
+    else: 
+        return 'Error: Project ID not Found', 400
 
 @app.route('/remove_task', methods=['POST'])
 @login_required
@@ -188,10 +208,14 @@ def long():
 def projects():
     # Handle the addition of a new project
     if request.method == "POST":
-        new_project()
+        return new_project()
 
+    tasks = db.execute("SELECT * FROM tasks WHERE user_id = ?", session["user_id"])
     projects = db.execute("SELECT * FROM projects WHERE user_id = ?", session["user_id"])
-    return render_template("projects.html", projects=projects)
+
+    projectHasTasks = False
+
+    return render_template("projects.html", projects=projects, tasks=tasks, projectHasTasks=projectHasTasks)
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -230,6 +254,9 @@ def register():
 
     return render_template("register.html")
 
+@app.route("/set_timer", methods=["POST"])
+def set_timer():
+
 @app.route("/short", methods=["GET", "POST"])
 @login_required
 def short():
@@ -260,3 +287,4 @@ def tasks():
     #         return render_template("tasks.html", tasks=tasks, projects=projects, project_dict=project_dict)
 
     return render_template("tasks.html", tasks=tasks, projects=projects, project_dict=project_dict)
+
