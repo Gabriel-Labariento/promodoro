@@ -32,7 +32,7 @@ def index():
     tasks = db.execute("SELECT * FROM tasks WHERE user_id = ?", session["user_id"])
     project_dict = db.execute("SELECT id, name FROM projects WHERE projects.user_id = ?", session["user_id"])
     
-    return render_template("index.html", pomodoro_duration=pomodoro_duration, projects=projects, tasks=tasks, project_dict=project_dict)
+    return render_template("index.html", db=db, pomodoro_duration=pomodoro_duration, projects=projects, tasks=tasks, project_dict=project_dict)
 
 @app.route("/change_settings", methods=["POST"])
 @login_required
@@ -85,6 +85,15 @@ def add_task():
 
     task_id = db.execute("SELECT last_insert_rowid()")[0]['last_insert_rowid()']
 
+    # Select the task's parent project
+    parent_project_name = db.execute("SELECT name FROM projects WHERE id = ? AND user_id = ?", parent_project, session["user_id"])
+    parent_project_name = parent_project_name[0]["name"]
+    if not parent_project_name:
+        parent_project_name = 'No Parent Project'
+
+    # Select all the projects currently in the database
+    projects = db.execute("SELECT id, name FROM projects WHERE user_id = ?", session["user_id"])
+    
     response = {
         'user_id': user_id,
         'task_id': task_id,
@@ -93,6 +102,8 @@ def add_task():
         'task_status': 'In Progress',
         'task_priority': 'Medium',
         'parent_project': parent_project,
+        'parent_project_name': parent_project_name,
+        'projects': projects,
         'status': 'success',
         'message': 'Task added successfully'
     }
@@ -304,17 +315,9 @@ def short():
 @login_required
 def tasks():
 
-    tasks = db.execute("SELECT id, name, project_id, due_date, status, priority FROM tasks WHERE user_id = ?", session["user_id"])
+    tasks = db.execute("SELECT * FROM tasks WHERE user_id = ?", session["user_id"])
     projects = db.execute("SELECT * FROM projects WHERE user_id = ?", session["user_id"])
     project_dict = db.execute("SELECT id, name FROM projects WHERE projects.user_id = ?", session["user_id"])
 
-    # if request.method == "POST":
-    #     if 'save_changes' in request.form:
-    #         edit_task()   
-    #         tasks = db.execute("SELECT id, name, project_id, due_date, status, priority FROM tasks WHERE user_id = ?", session["user_id"])
-    #         projects = db.execute("SELECT * FROM projects WHERE user_id = ?", session["user_id"])
-    #         project_dict = db.execute("SELECT id, name FROM projects WHERE projects.user_id = ?", session["user_id"])
-    #         return render_template("tasks.html", tasks=tasks, projects=projects, project_dict=project_dict)
-
-    return render_template("tasks.html", tasks=tasks, projects=projects, project_dict=project_dict)
+    return render_template("tasks.html", db=db, tasks=tasks, projects=projects, project_dict=project_dict)
 

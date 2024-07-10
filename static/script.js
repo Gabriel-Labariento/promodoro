@@ -196,11 +196,12 @@ $(document).ready(function(){
                                                 <div class="mb-3">
                                                     <label for="edit_parent_project-${response.task_id}" class="form-label">Parent Project</label>
                                                     <select id="edit_parent_project-${response.task_id}" name="edit_parent_project" class="form-select">
-                                                          <option value="" selected>No Parent Project</option>
-                                                          {% for project in projects %}
-                                                          <option value="{{ project.id }}">{{ project.name }}</option>
-                                                          {% endfor %}
-                                                    </select>
+                                                          <option value="${response.parent_project}" selected>${response.parent_project_name}</option>` 
+                                                        for (let i = 0; i < response.projects.length; i++){
+                                                          newTaskHtml += "<option value='"+ ${response.projects[i]["id"]} + "'>" + ${response.projects[i]["name"]} + "</option>"
+                                                        };
+                                                          +
+                                                    `</select>
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -255,7 +256,7 @@ $(document).ready(function(){
                                                 <div class="mb-3">
                                                     <label for="edit_parent_project-${response.task_id}" class="form-label">Parent Project</label>
                                                     <select id="edit_parent_project-${response.task_id}" name="edit_parent_project" class="form-select">
-                                                          <option value="" selected>No Parent Project</option>
+                                                          <option value="" selected>${response.parent_project_name}</option>
                                                           {% for project in projects %}
                                                           <option value="{{ project.id }}">{{ project.name }}</option>
                                                           {% endfor %}
