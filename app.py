@@ -254,8 +254,8 @@ def register():
 
     return render_template("register.html")
 
-@app.route("/set_timer", methods=["POST"])
-def set_timer():
+# @app.route("/set_timer", methods=["POST"])
+# def set_timer():
 
 @app.route("/short", methods=["GET", "POST"])
 @login_required
