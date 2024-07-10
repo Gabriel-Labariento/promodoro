@@ -6,18 +6,19 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-            <form class="form" action="/change_settings" method="post" id="settings_form" name="settings_form">
+            <form class="form" action="" method="post" id="settings_form" name="settings_form">
                 <div class="mb-3">
+                    <input type="hidden" name="form_name" value="settings_form">
                     <label class="form-label" for="pomodoroLength">Pomodoro Duration</label>
-                    <input class="form-control" type="number" name="pomodoroLength">
+                    <input class="form-control" type="number" id="pomodoroLength" name="pomodoroLength">
                 </div>
                 <div class="mb-3">
                     <label class="form-label" for="shortLength">Short Break Duration</label>
-                    <input class="form-control" type="number" name="shortLength">
+                    <input class="form-control" type="number" id="shortLength" name="shortLength">
                 </div>
                 <div class="mb-3">
                     <label class="form-label" for="longLength">Long Break Duration</label>
-                    <input class="form-control" type="number" name="longLength">
+                    <input class="form-control" type="number" id="longLength" name="longLength">
                 </div>
         </div>
         <div class="modal-footer">

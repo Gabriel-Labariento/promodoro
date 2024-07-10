@@ -13,31 +13,6 @@ from functools import wraps
 # Initialize database
 db = SQL("sqlite:///promodoro.db")
 
-def change_settings():
-    pomodoroLength = request.form.get("pomodoroLength")
-    if not pomodoroLength:
-        pomodoroLength = 25
-
-    shortLength = request.form.get("shortLength")
-    if not shortLength:
-        shortLength = 5
-
-    longLength = request.form.get("longLength")
-    if not longLength:
-        longLength = 15
-    
-    user_id = session["user_id"]
-
-    response = {
-        'user_id': user_id,
-        'pomodoroLength': pomodoroLength,
-        'shortLength': shortLength,
-        'longLength': longLength,
-        'status': 'success'
-    }
-    return jsonify(response)
-
-
 def login_required(f):
     """
     Decorate routes to require login.

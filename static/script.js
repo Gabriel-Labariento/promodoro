@@ -2,37 +2,38 @@
 
 
 // Handle changing the length of timers
-// $(document).ready(function() {
-//   $('#settings_form').on('submit', function(event) {
-//     event.preventDefault();
+$(document).ready(function() {
+  $('#settings_form').on('submit', function(event) {
+    event.preventDefault();
 
-//     let form = $(this);
-//     let div = form.closest('.modal-body');
-//     let data = {
-//       pomodoroLength: div.find('input[name="pomodoroLength"]').val(),
-//       shortLength: div.find('input[name="shortLength"]').val(),
-//       longLength: div.find('input[name="longLength"]').val()
-//     };
-    
-//     $.ajax({
-//       type: 'POST',
-//       url: '/change_settings',
-//       data: JSON.stringify(data),
-//       contentType: 'application/json',
-//       success: function(response) {
-//         if (response.status === 'success') {
-//           console.log('Data sent successfully', response);
-//           $(`#settings_form`).modal('hide');
-//         } else {
-//           alert(response.message);
-//         }
-//       },
-//       error: function(error) {
-//         console.log(error);
-//       }
-//     });
-//   });
-// });
+    let form = $(this);
+    let div = form.closest('.modal-body');
+    let data = {
+      pomodoroLength: div.find('input[name="pomodoroLength"]').val(),
+      shortLength: div.find('input[name="shortLength"]').val(),
+      longLength: div.find('input[name="longLength"]').val()
+    };
+    console.log(data);
+
+    $.ajax({
+      type: 'POST',
+      url: '/change_settings',
+      data: JSON.stringify(data),
+      contentType: 'application/json',
+      success: function(response) {
+        if (response.status === 'success') {
+          $(`#settings_modal`).modal('hide');
+          location.reload();
+        } else {
+          alert(response.message);
+        }
+      },
+      error: function(error) {
+        console.log(error);
+      }
+    });
+  });
+});
 
 // Handle the pomodoro timers
 document.addEventListener('DOMContentLoaded', (event) => {

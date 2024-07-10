@@ -4,7 +4,7 @@ from cs50 import SQL
 from flask import Flask, session, redirect, url_for, request, render_template, jsonify
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
-from helpers import login_required, new_project, change_settings
+from helpers import login_required, new_project
 
 app = Flask(__name__)
 
@@ -21,10 +21,11 @@ db = SQL("sqlite:///promodoro.db")
 @app.route("/", methods=["GET", "POST"])
 @login_required
 def index():
-    if request.method == "POST":
-        response = change_settings()
-        return
-    pomodoro_duration = 25 * 60
+    # set timer length
+    pomodoro_duration = db.execute("SELECT pomodoro FROM timer WHERE user_id = ?", session["user_id"])
+    pomodoro_duration = pomodoro_duration[0]["pomodoro"]
+    pomodoro_duration *= 60
+
     # Retrieve projects and tasks for the logged-in user
 
     projects = db.execute("SELECT * FROM projects WHERE user_id = ?", session["user_id"])
@@ -32,6 +33,28 @@ def index():
     project_dict = db.execute("SELECT id, name FROM projects WHERE projects.user_id = ?", session["user_id"])
     
     return render_template("index.html", pomodoro_duration=pomodoro_duration, projects=projects, tasks=tasks, project_dict=project_dict)
+
+@app.route("/change_settings", methods=["POST"])
+@login_required
+def change_settings():
+    data = request.json
+    pomodoroLength = data.get("pomodoroLength", 25)
+    shortLength = data.get("shortLength", 5)
+    longLength = data.get("longLength", 15)
+        
+    user_id = session["user_id"]
+
+    # Update the database of timers:
+    db.execute("UPDATE timer SET pomodoro = ?, short = ?, long = ? WHERE user_id = ?", pomodoroLength, shortLength, longLength, user_id)
+
+    response = {
+        'user_id': user_id,
+        'pomodoroLength': pomodoroLength,
+        'shortLength': shortLength,
+        'longLength': longLength,
+        'status': 'success'
+    }
+    return jsonify(response)
 
 @app.route('/add_task', methods=['POST'])
 @login_required
@@ -194,7 +217,9 @@ def logout():
 @login_required
 def long():
     # Set duration of pomodoro timer for long break
-    pomodoro_duration = 15 * 60
+    pomodoro_duration = db.execute("SELECT long FROM timer WHERE user_id = ?", session["user_id"])
+    pomodoro_duration = pomodoro_duration[0]["long"]
+    pomodoro_duration *= 60
 
     # Retrieve projects and tasks for the logged-in user
     projects = db.execute("SELECT * FROM projects WHERE user_id = ?", session["user_id"])
@@ -250,6 +275,9 @@ def register():
         # Log user in
         rows = db.execute("SELECT * FROM users WHERE username = ?", username)
         session["user_id"] = rows[0]["id"]
+
+        db.execute("INSERT INTO timer (user_id) VALUES(?)", session["user_id"])
+
         return redirect("/")
 
     return render_template("register.html")
@@ -261,7 +289,9 @@ def register():
 @login_required
 def short():
     # Set duration of pomodoro timer for short break
-    pomodoro_duration = 5 * 60
+    pomodoro_duration = db.execute("SELECT short FROM timer WHERE user_id = ?", session["user_id"])
+    pomodoro_duration = pomodoro_duration[0]["short"]
+    pomodoro_duration *= 60
 
     # Retrieve projects and tasks for the logged-in user
     projects = db.execute("SELECT * FROM projects WHERE user_id = ?", session["user_id"])
