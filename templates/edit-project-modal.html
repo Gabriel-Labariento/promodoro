@@ -44,14 +44,6 @@
                             <option value="High">High</option>
                         </select>
                     </div>
-                    <div class="mb-3">
-                        <label for="edit_parent_project-{{ project.id }}" class="form-label">Parent Project</label>
-                        <select id="edit_parent_project-{{ project.id }}" name="edit_parent_project" class="form-select">
-                            <option value="" selected>{{ project.project.name if project.project else 'No Parent Project' }}</option>
-                            {% for project in projects %}
-                            <option value="{{ project.id }}">{{ project.name }}</option>
-                            {% endfor %}
-                        </select>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

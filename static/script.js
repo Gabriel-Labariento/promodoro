@@ -43,6 +43,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
   let remainingTime = pomodoroDuration * 1000; // Convert to milliseconds
   let isPaused = false;
   let endTime;
+  let done = new Audio('/sounds/done.mp3');
+  let hit = new Audio('/sounds/hit.mp3');
 
   const updateDisplay = (distance) => {
     const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
@@ -53,6 +55,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
   };
 
   const startTimer = () => {
+    hit.play();
     endTime = new Date().getTime() + remainingTime;
 
     timerInterval = setInterval(() => {
@@ -73,6 +76,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     // Update the display immediately without waiting for the first interval tick
     updateDisplay(remainingTime);
+    if (distance == 0){
+      done.play();
+    }
   };
 
   startButton.addEventListener('click', () => {
@@ -86,11 +92,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
     isPaused = !isPaused;
     if (isPaused) {
       clearInterval(timerInterval);
+      console.log(pauseButton.textContent)
       pauseButton.textContent = 'Resume Timer';
     } else {
       endTime = new Date().getTime() + remainingTime;
+      pauseButton.textContent = 'Pause';
       startTimer();
-      pauseButton.textContent = 'Pause Timer';
     }
   });
 
@@ -242,7 +249,7 @@ $(document).ready(function(){
           let selectProjectsMain =  `<div class="mb-3">
                                   <label for="edit_parent_project-${response.task_id}" class="form-label">Parent Project</label>
                                     <select id="edit_parent_project-${response.task_id}" name="edit_parent_project" class="form-select">
-                                        <option value="${response.parent_project}" selected>${response.parent_project_name}</option>
+                                        <option value="${response.parent_project}" selected>${response.parent_project_name[0]["name"]}</option>
                                    `;
           
           // Will consitute the project select field

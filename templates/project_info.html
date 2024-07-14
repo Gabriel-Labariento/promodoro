@@ -14,13 +14,9 @@
           <ul>
             {% for task in tasks %}
                 {% if task.project_id == project.id %}
-                    {% set projectHasTasks = True%}
                     <li>{{ task.name }}</li>
                 {% endif %}
             {% endfor %}
-            {% if projectHasTasks == False %}
-                No associated tasks
-            {% endif %}
         </ul>
         </div>
         <div class="modal-footer">

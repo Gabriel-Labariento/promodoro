@@ -38,9 +38,16 @@ def index():
 @login_required
 def change_settings():
     data = request.json
-    pomodoroLength = data.get("pomodoroLength", 25)
-    shortLength = data.get("shortLength", 5)
-    longLength = data.get("longLength", 15)
+    pomodoroLength = data.get("pomodoroLength")
+    shortLength = data.get("shortLength")
+    longLength = data.get("longLength")
+
+    if not pomodoroLength:
+        pomodoroLength = 25
+    if not shortLength:
+        shortLength = 5
+    if not longLength:
+        longLength = 15
         
     user_id = session["user_id"]
 
@@ -89,7 +96,6 @@ def add_task():
     parent_project_name = db.execute("SELECT name FROM projects WHERE id = ? AND user_id = ?", parent_project, session["user_id"])
     if not parent_project_name:
         parent_project_name = 'No Parent Project'
-    parent_project_name = parent_project_name[0]["name"]
 
     # Select all the projects currently in the database
     projects = db.execute("SELECT * FROM projects WHERE user_id = ?", session["user_id"])
@@ -127,6 +133,10 @@ def edit_task():
         project_exists = db.execute("SELECT id FROM projects WHERE id = ?", parent_project)
         if not project_exists:
             parent_project = None
+        parent_project_name = db.execute("SELECT name FROM projects WHERE id = ?", parent_project)
+        parent_project_name = parent_project_name[0]
+        if not parent_project_name:
+            parent_project_name = ""
 
     try:
         # Update the task in the database
@@ -144,6 +154,7 @@ def edit_task():
             'task_priority': task_priority,
             'task_due': task_due,
             'parent_project': parent_project,
+            'parent_project_name': parent_project_name,
             'user_id': session["user_id"]
         }
         return jsonify(response)
@@ -165,7 +176,7 @@ def remove_project():
             return jsonify(response)
         
         except Exception as e:
-            return jsonify({'status': 'error', 'message': str(e)})
+            return jsonify({'status': 'error', 'message': 'Please clear all associated tasks first.'})
     else: 
         return 'Error: Project ID not Found', 400
 
@@ -249,9 +260,7 @@ def projects():
     tasks = db.execute("SELECT * FROM tasks WHERE user_id = ?", session["user_id"])
     projects = db.execute("SELECT * FROM projects WHERE user_id = ?", session["user_id"])
 
-    projectHasTasks = False
-
-    return render_template("projects.html", projects=projects, tasks=tasks, projectHasTasks=projectHasTasks)
+    return render_template("projects.html", projects=projects, tasks=tasks)
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
