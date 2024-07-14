@@ -13,7 +13,7 @@ $(document).ready(function() {
       shortLength: div.find('input[name="shortLength"]').val(),
       longLength: div.find('input[name="longLength"]').val()
     };
-    console.log(data);
+    (data);
 
     $.ajax({
       type: 'POST',
@@ -141,7 +141,10 @@ $(document).ready(function(){
       },
       success: function(response) {
         if (response.status === 'success') {
-          let newTaskHtml = `<div id="index-row-${response.task_id}" class="row pt-2">
+          // Create a list of dictionaries where key = project_id and value = project_name
+          let projects = response.projects;
+
+          let newTaskHtmlMain = `<div id="index-row-${response.task_id}" class="row pt-2">
                                 <div class="col-md-4 offset-md-4">
                                     <div class="card text-bg-secondary task">
                                         <div class="card-body d-flex justify-content-between align-items-center">
@@ -192,27 +195,9 @@ $(document).ready(function(){
                                                         <option value="Medium">Medium</option>
                                                         <option value="High">High</option>
                                                     </select>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label for="edit_parent_project-${response.task_id}" class="form-label">Parent Project</label>
-                                                    <select id="edit_parent_project-${response.task_id}" name="edit_parent_project" class="form-select">
-                                                          <option value="${response.parent_project}" selected>${response.parent_project_name}</option>` 
-                                                        for (let i = 0; i < response.projects.length; i++){
-                                                          newTaskHtml += "<option value='"+ ${response.projects[i]["id"]} + "'>" + ${response.projects[i]["name"]} + "</option>"
-                                                        };
-                                                          +
-                                                    `</select>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                    <button type="submit" name="save_changes" value="submit" class="btn btn-primary">Save changes</button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>`;
-          let editTaskModal = `<div id="editTaskModal-${response.task_id}" class="modal fade" tabindex="-1">
+                                                </div>`
+
+          let editTaskModalMain = `<div id="editTaskModal-${response.task_id}" class="modal fade" tabindex="-1">
                                 <div class="modal-dialog modal-dialog-centered">
                                     <div class="modal-content">
                                         <div class="modal-header">
@@ -252,26 +237,36 @@ $(document).ready(function(){
                                                         <option value="Medium">Medium</option>
                                                         <option value="High">High</option>
                                                     </select>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label for="edit_parent_project-${response.task_id}" class="form-label">Parent Project</label>
-                                                    <select id="edit_parent_project-${response.task_id}" name="edit_parent_project" class="form-select">
-                                                          <option value="" selected>${response.parent_project_name}</option>
-                                                          {% for project in projects %}
-                                                          <option value="{{ project.id }}">{{ project.name }}</option>
-                                                          {% endfor %}
-                                                    </select>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                    <button type="submit" name="save_changes" value="submit" class="btn btn-primary">Save changes</button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
+                                                </div>`;
+                                                
+          let selectProjectsMain =  `<div class="mb-3">
+                                  <label for="edit_parent_project-${response.task_id}" class="form-label">Parent Project</label>
+                                    <select id="edit_parent_project-${response.task_id}" name="edit_parent_project" class="form-select">
+                                        <option value="${response.parent_project}" selected>${response.parent_project_name}</option>
+                                   `;
+          
+          // Will consitute the project select field
+          selectProjectList = ``
+
+          for (let i = 0; i < projects.length; i++){
+            if (projects[i].id != response.parent_project){
+            selectProjectList += `<option value="${projects[i].id}">${projects[i].name}</option>`
+            };
+          }
+
+          let editTaskFooter =  `</select>
                                 </div>
+                                    <div class="modal-footer">
+                                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                      <button type="submit" name="save_changes" value="submit" class="btn btn-primary">Save changes</button>
+                                    </div>
+                                  </form>
+                                  </div>
+                                </div>
+                              </div>
                             </div>`;
-                            let newTaskRowHtml = `
+                            
+          let newTaskRowHtml = `
                             <tr id="taskRow-${response.task_id}" data-task-id="${response.task_id}">
                               <td>${response.task_name}</td>
                               <td></td>
@@ -296,10 +291,10 @@ $(document).ready(function(){
                                                 <input type="hidden" id="edit_task_id" name="task_id" value="${response.task_id}">
                                                 <div class="mb-3"> `;
 
-          $('#tasks').append(newTaskHtml);
+          $('#tasks').append(newTaskHtmlMain + selectProjectsMain + selectProjectList + editTaskFooter);
           $('#taskTableBody').append(newTaskRowHtml);
-          $('#taskPageTasks').append(editTaskModal);
-          $('#editTaskModal').append(editTaskModal);
+          $('#taskPageTasks').append(editTaskModalMain + selectProjectsMain + selectProjectList + editTaskFooter);
+          $('#editTaskModal').append(editTaskModalMain + selectProjectsMain + selectProjectList + editTaskFooter);
           $('#task_name').val('');
           $('#task_duration').val('');
           $('#parent_project').val('');
@@ -352,6 +347,12 @@ $(document).ready(function(){
             taskRow.find('td').eq(3).text(response.task_priority);
             taskRow.find('td').eq(4).text(response.parent_project ? response.parent_project_name : 'None');
 
+            // Reload the page if the page is the tasks page
+            let url = window.location.href;
+            if (url.includes("tasks")){
+              window.location.reload();
+            }
+  
             let taskCard = $(`#task-card-${response.task_id}`);
             taskCard.find('.task-name').text(response.task_name);
   
@@ -375,7 +376,7 @@ $(document).ready(function() {
 
     let form = $(this);
     let task_id = form.find('input[name="remove_task_button"]').val();
-    console.log(task_id);
+    (task_id);
 
     $.ajax({
       type: 'POST',

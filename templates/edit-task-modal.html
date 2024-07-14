@@ -51,7 +51,9 @@
                                 {% endif %}
                             </option>
                             {% for project in projects %}
-                            <option value="{{ project.id }}">{{ project.name }}</option>
+                            {% if project.id != task.project_id %}
+                                <option value="{{ project.id }}">{{ project.name }}</option>
+                            {% endif %}
                             {% endfor %}
                         </select>
                     </div>

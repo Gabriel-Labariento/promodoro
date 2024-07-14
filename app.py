@@ -87,12 +87,12 @@ def add_task():
 
     # Select the task's parent project
     parent_project_name = db.execute("SELECT name FROM projects WHERE id = ? AND user_id = ?", parent_project, session["user_id"])
-    parent_project_name = parent_project_name[0]["name"]
     if not parent_project_name:
         parent_project_name = 'No Parent Project'
+    parent_project_name = parent_project_name[0]["name"]
 
     # Select all the projects currently in the database
-    projects = db.execute("SELECT id, name FROM projects WHERE user_id = ?", session["user_id"])
+    projects = db.execute("SELECT * FROM projects WHERE user_id = ?", session["user_id"])
     
     response = {
         'user_id': user_id,
