@@ -43,8 +43,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
   let remainingTime = pomodoroDuration * 1000; // Convert to milliseconds
   let isPaused = false;
   let endTime;
-  let done = new Audio('/sounds/done.mp3');
-  let hit = new Audio('/sounds/hit.mp3');
+  const done = new Howl({
+    src: ['static/done.mp3'] 
+  });
+  const hit = new Howl({
+    src: ['static/hit.mp3']
+  });
 
   const updateDisplay = (distance) => {
     const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
@@ -55,14 +59,15 @@ document.addEventListener('DOMContentLoaded', (event) => {
   };
 
   const startTimer = () => {
-    hit.play();
     endTime = new Date().getTime() + remainingTime;
-
     timerInterval = setInterval(() => {
       if (!isPaused) {
         const now = new Date().getTime();
         const distance = endTime - now;
 
+        if (distance < 580){
+          done.play();
+        }
         if (distance < 0) {
           clearInterval(timerInterval);
           document.getElementById("minutes").innerHTML = "00";
@@ -70,29 +75,28 @@ document.addEventListener('DOMContentLoaded', (event) => {
         } else {
           remainingTime = distance;
           updateDisplay(distance);
+          (distance);
         }
       }
     }, 1000);
 
     // Update the display immediately without waiting for the first interval tick
     updateDisplay(remainingTime);
-    if (distance == 0){
-      done.play();
-    }
   };
 
   startButton.addEventListener('click', () => {
     isPaused = false;
     startButton.disabled = true;
     pauseButton.disabled = false;
+    hit.play();
     startTimer();
   });
 
   pauseButton.addEventListener('click', () => {
+    hit.play();
     isPaused = !isPaused;
     if (isPaused) {
       clearInterval(timerInterval);
-      console.log(pauseButton.textContent)
       pauseButton.textContent = 'Resume Timer';
     } else {
       endTime = new Date().getTime() + remainingTime;
@@ -103,20 +107,23 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     window.addEventListener('keydown', function(event){
       if(event.key == " "){
+        hit.play();
           if (!startButton.disabled){
               isPaused = false;
               startButton.disabled = true;
               pauseButton.disabled = false;
               startTimer();
           } else {
+          hit.play();
               isPaused = !isPaused;
+              (isPaused);
               if (isPaused) {
                   clearInterval(timerInterval);
                   pauseButton.textContent = 'Resume Timer';
               } else {
                   endTime = new Date().getTime() + remainingTime;
                   startTimer();
-                  pauseButton.textContent = 'Pause Timer';
+                  pauseButton.textContent = 'Pause';
               }
           }
       }
