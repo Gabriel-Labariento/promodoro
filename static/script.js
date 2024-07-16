@@ -309,7 +309,7 @@ $(document).ready(function(){
                               <td></td>
                               <td>${response.task_status}</td>
                               <td>${response.task_priority}</td>
-                              <td>${response.parent_project ? response.parent_project_name : 'None'}</td>
+                              <td>${response.parent_project ? response.parent_project_name[0]["name"] : 'None'}</td>
                               <td>
                                <div class="d-flex align-items-center">
                                   <a href="#" class="text-dark" data-bs-toggle="modal" data-bs-target="#editTaskModal-${response.task_id}" data-task-id="${response.task_id}"><i class="bi bi-pen-fill"></i></a>
