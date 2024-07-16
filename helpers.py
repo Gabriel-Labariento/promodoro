@@ -1,13 +1,6 @@
-import csv
-import datetime
-import pytz
-import urllib
-import uuid
-
 from datetime import date
 from cs50 import SQL
-from flask import Flask, flash, redirect, render_template, request, session, jsonify
-from flask_session import Session
+from flask import redirect, request, session, jsonify
 from functools import wraps
 
 # Initialize database
