@@ -1,6 +1,5 @@
 // Javascript made with the help of ChatGPT
 
-
 // Handle changing the length of timers
 $(document).ready(function() {
   $('#settings_form').on('submit', function(event) {
@@ -34,7 +33,7 @@ $(document).ready(function() {
     });
   });
 });
-
+  
 // Handle the pomodoro timers
 document.addEventListener('DOMContentLoaded', (event) => {
   const startButton = document.getElementById('pomoStart');
@@ -49,6 +48,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
   const hit = new Howl({
     src: ['static/hit.mp3']
   });
+  
 
   const updateDisplay = (distance) => {
     const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
@@ -67,7 +67,21 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
         if (distance < 580){
           done.play();
+          let url = window.location.href
+          console.log(pomodoroCount);
+          if (url.includes("short") || url.includes("long")){
+              location.replace("../");
+          } else {
+            if (pomodoroCount < 4){
+              location.replace("/short");
+              pomodoroCount = pomodoroCount + 1;
+            } else {
+              location.replace("/long");
+              pomodoroCount = 0;
+            }      
+          }
         }
+
         if (distance < 0) {
           clearInterval(timerInterval);
           document.getElementById("minutes").innerHTML = "00";
