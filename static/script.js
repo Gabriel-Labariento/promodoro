@@ -33,7 +33,8 @@ $(document).ready(function() {
     });
   });
 });
-  
+
+
 // Handle the pomodoro timers
 document.addEventListener('DOMContentLoaded', (event) => {
   const startButton = document.getElementById('pomoStart');
@@ -48,39 +49,47 @@ document.addEventListener('DOMContentLoaded', (event) => {
   const hit = new Howl({
     src: ['static/hit.mp3']
   });
+  let pomodoroCount = parseInt(localStorage.getItem('pomodoroCount')) || 0;
   
+  function switchDisplay(url, pomodoroCount) {
+    if (url.includes("short") || url.includes("long")) {
+      location.assign("../");
+    } else {
+      if (pomodoroCount < 4) {
+        location.assign("/short");
+        pomodoroCount = pomodoroCount + 1;
+        localStorage.setItem('pomodoroCount', pomodoroCount);
+        console.log(pomodoroCount);
+      } else {
+        location.assign("/long");
+        pomodoroCount = 0;
+        localStorage.setItem('pomodoroCount', pomodoroCount);
+      };
+    };
+  }
 
-  const updateDisplay = (distance) => {
+  function updateDisplay(distance) {
+
     const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
+    console.log(minutes);
+    console.log(seconds);
+    console.log(distance);
+    if (minutes == 0 && seconds == 0) {
+      done.play();
+      let url = window.location.href;
+      switchDisplay(url, pomodoroCount);
+    }
     document.getElementById("minutes").innerHTML = minutes.toString().padStart(2, '0');
     document.getElementById("seconds").innerHTML = seconds.toString().padStart(2, '0');
-  };
-
-  const startTimer = () => {
+  }
+  
+  function startTimer() {
     endTime = new Date().getTime() + remainingTime;
     timerInterval = setInterval(() => {
       if (!isPaused) {
         const now = new Date().getTime();
         const distance = endTime - now;
-
-        if (distance < 580){
-          done.play();
-          let url = window.location.href
-          console.log(pomodoroCount);
-          if (url.includes("short") || url.includes("long")){
-              location.replace("../");
-          } else {
-            if (pomodoroCount < 4){
-              location.replace("/short");
-              pomodoroCount = pomodoroCount + 1;
-            } else {
-              location.replace("/long");
-              pomodoroCount = 0;
-            }      
-          }
-        }
 
         if (distance < 0) {
           clearInterval(timerInterval);
@@ -96,7 +105,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     // Update the display immediately without waiting for the first interval tick
     updateDisplay(remainingTime);
-  };
+  }
 
   startButton.addEventListener('click', () => {
     isPaused = false;
