@@ -21,41 +21,6 @@ def login_required(f):
 
     return decorated_function
 
-def new_task():
-    # Get task name, duration, and parent project if available
-    task_name = request.form.get("task-name")
-        
-    # Handle no inputs
-    if not request.form.get("task-duration"):
-        task_duration = 0
-
-    # Get inputs if there are any
-    task_duration = request.form.get("task-duration")
-    parent_project = request.form.get("add-parent") # Gives the id of a project
-
-    # Ensure user is logged in
-    user_id = session.get("user_id")
-    if not user_id:
-        return jsonify({'status': 'error', 'message': 'user not logged in'})
-    
-    # Insert data into the database
-    db.execute(
-        "INSERT INTO tasks (user_id, name, duration, project_id) VALUES(?, ?, ?, ?)",
-        user_id, task_name, task_duration, parent_project
-        )
-    
-    # Jsonify data
-    response = {
-        'user_id' : user_id,
-        'task_name' : task_name,
-        'task_duration' : task_duration,
-        'parent_project' : parent_project,
-        'status' : 'success',
-        'message' : 'task added successfully'
-    }
-
-    return jsonify(response)
-
 def new_project():
     # Get project name, description, and due date
     project_name = request.form.get("project-name")
@@ -103,7 +68,7 @@ def new_project():
     
     return redirect("/projects")
 
-def update_task():
+
     # Get task name, duration, and parent project if available
     task_id = request.form.get("edit_task_id")
     task_name = request.form.get("edit_task_name")
