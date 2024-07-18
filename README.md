@@ -90,4 +90,4 @@
         - tasks can be added from this page.
     
 #### Note
-- This is the first coding project that I built from scratch. I want to thank CS50 for making available the resources I needed to learn to build this project. This project was heavily inspired by pomofocus.io.a  
+- This is the first coding project that I built from scratch. I want to thank CS50 for making available the resources I needed to learn to build this project. This project was heavily inspired by pomofocus.io
