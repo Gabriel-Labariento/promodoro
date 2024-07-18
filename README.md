@@ -33,4 +33,39 @@
     - Inludes new project function definition. Projects can only be viewed in the project page. Page can simply be reloaded if changes are made since there is no timer in this page.
 
 - #### app.py
-    - 
+    - Includes app routes: default, change settings, add_task, edit_task, remove_project, remove_task, login, logout, register, short/long break page, projects page, and tasks page
+    - sets database
+    - sets session
+
+- #### promodoro.db
+    - main database for the project
+    - includes 4 tables: tasks, projects, users, and timer.
+
+- #### templates
+    - #### edit-project-modal.html
+        - allows the user to edit projects
+    - #### edit-task-modal.html
+        - allows the user to edit tasks
+    - #### index.html
+        - focus page of the project, displays a playable and pausable timer set to 25 minutes by default. 
+        - displays current tasks of the user
+    - #### layout.html
+        - main layout of the project, inspired by CS50's Finance.
+        - includes links and scripts
+    - #### login.html
+        - includes a form that allows the user to login if they already have an account.
+        - will not log user in if the details do not exist in the database.
+    - #### long.html
+        - what the webpage will display if the user is on a long break.
+        - long breaks are set to 15 minutes by default.
+    - #### project_info.html
+        - modal that displays when a project is clicked on.
+        - displays the project description and the tasks associated with the project.
+    - #### project-modal.html
+        - displays a form that allows the user to add a new project.
+    - #### projects.html
+        - page that displays all the projects of the user in a table. 
+        - the table displays information: project status, project priority, project start date, and project due date.
+        - users can clear/remove projects from this page. 
+        - only projects with all tasks cleared can be removed.
+    - #### register.html
