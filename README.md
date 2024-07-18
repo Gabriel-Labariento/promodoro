@@ -58,6 +58,7 @@
     - #### long.html
         - what the webpage will display if the user is on a long break.
         - long breaks are set to 15 minutes by default.
+        - displays current tasks of the user.
     - #### project_info.html
         - modal that displays when a project is clicked on.
         - displays the project description and the tasks associated with the project.
@@ -69,3 +70,24 @@
         - users can clear/remove projects from this page. 
         - only projects with all tasks cleared can be removed.
     - #### register.html
+        - creates a new user account with the following information: user email, user name, and password.
+        - error will be thrown if username is already taken.
+        - error will be thrown if password and confirmation password do not match.
+    - #### settings-modal.html
+        - displays a form when the settings tab is clicked.
+        - form contains number inputs that determine how long the user wants the timers to be (in minutes)
+        - information is then store in the database and retrieved by app.py
+    - #### short.html
+        - what the webpage will display of the user is on a short break,
+        - short breaks are set to 5 minutes by default.
+        - displays current tasks of the user.
+    - #### task-modal.html
+        - displays a form in a modal that allows the user to add a new task.
+    - #### tasks.html
+        - page that displays all the tasks of the user in a table.
+        - the table displays information: task name, due date, status, priority, and parent project.
+        - tasks are editable and removable from this page.
+        - tasks can be added from this page.
+    
+#### Note
+- This is the first coding project that I built from scratch. I want to thank CS50 for making available the resources I needed to learn to build this project. This project was heavily inspired by pomofocus.io.a  
