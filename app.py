@@ -133,10 +133,13 @@ def edit_task():
         project_exists = db.execute("SELECT id FROM projects WHERE id = ?", parent_project)
         if not project_exists:
             parent_project = None
-        parent_project_name = db.execute("SELECT name FROM projects WHERE id = ?", parent_project)
+    
+    parent_project_name = db.execute("SELECT name FROM projects WHERE id = ?", parent_project)
+    if not parent_project_name:
+        parent_project_name = ""
+    else:
         parent_project_name = parent_project_name[0]
-        if not parent_project_name:
-            parent_project_name = ""
+        
 
     try:
         # Update the task in the database
@@ -248,7 +251,7 @@ def long():
     tasks = db.execute("SELECT * FROM tasks WHERE user_id = ?", session["user_id"])
     project_dict = db.execute("SELECT id, name FROM projects WHERE projects.user_id = ?", session["user_id"])
 
-    return render_template("long.html", pomodoro_duration=pomodoro_duration, project_dict=project_dict, tasks=tasks, projects=projects)
+    return render_template("long.html", pomodoro_duration=pomodoro_duration, project_dict=project_dict, tasks=tasks, projects=projects, db=db)
 
 @app.route("/projects", methods=["GET", "POST"])
 @login_required
@@ -308,6 +311,7 @@ def register():
 @app.route("/short", methods=["GET", "POST"])
 @login_required
 def short():
+    
     # Set duration of pomodoro timer for short break
     pomodoro_duration = db.execute("SELECT short FROM timer WHERE user_id = ?", session["user_id"])
     pomodoro_duration = pomodoro_duration[0]["short"]
@@ -318,7 +322,7 @@ def short():
     tasks = db.execute("SELECT * FROM tasks WHERE user_id = ?", session["user_id"])
     project_dict = db.execute("SELECT id, name FROM projects WHERE projects.user_id = ?", session["user_id"])
 
-    return render_template("short.html", pomodoro_duration=pomodoro_duration, projects=projects, tasks=tasks, project_dict=project_dict)
+    return render_template("short.html", pomodoro_duration=pomodoro_duration, projects=projects, tasks=tasks, project_dict=project_dict, db=db)
 
 @app.route("/tasks", methods=["GET", "POST"])
 @login_required
