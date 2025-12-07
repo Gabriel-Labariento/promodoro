@@ -1,5 +1,5 @@
 # PROMODORO
-#### Video Demo:  <URL HERE>
+#### Video Demo: https://youtu.be/H9OYd3WHc9g
 #### Description: This Pomodoro Productivity App is a web-based application designed to help users manage their tasks and projects effectively and work using the Pomodoro Technique. It allows users to add, edit, and remove tasks and projects, track their progress, and customize their Pomodoro timer settings. Tasks are associated with projects and users can view the parent project of each task as well as the children tasks linked with each project. AJAX was used to dynamically change the webpage according to user input. Timers lengths can also be dynamically altered.
 
 #### The web application includes a user registration and login page so that user data can be kept. Design and ideas were influenced by CS50's Finance Problem Set. Each task and project is editable through a task/project modal. Each modal is specific to its parent task. After each pomodoro session, the page URL is automatically assigned to the short break page. After the short break, the URL is assigned back to the pomodoro page. After 4 pomodoro sessions, the URL is assigned to the long break page instead of the short break page.
